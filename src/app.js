@@ -1,8 +1,16 @@
 const express=require("express")
 const app=express()
-app.use("/",(req,res)=>{
-    res.send("Server")
+
+// This will only handle GET call to /user
+app.get("/user",()=>{
+    res.send({firstName:'Akshay'})
 })
+
+app.post("/user",()=>{
+    res.send("Data saved successfully")
+})
+
+// This will match all HTTP requests
 app.use("/hello",(req,res)=>{
     res.send("Hello from server")
 })
