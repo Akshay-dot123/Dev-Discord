@@ -1,48 +1,34 @@
 const express = require("express");
+const connectionDB = require("./config/database");
+const UserModel = require("./models/user");
+require("./config/database");
 const app = express();
-const adminAuth = require("./middlewares/auth");
-// Middleware
-app.use("/admin", adminAuth);
+app.use(express.json())  // If we dont use this we will get undefined if we log request body
 
-app.get("/admin/user", (req, res) => {
-  res.send("User data sent");
-});
-
-// Multiple Route Handler
-app.use(
-  "/route",
-  (req, res, next) => {
-    console.log("Handling route 1");
-    next();
-  },
-  (req, res, next) => {
-    console.log("Handling route 2");
-    res.send("2nd response !!");
-    next();
-  },
-  (req, res, next) => {
-    console.log("Handling route 2");
-    res.send("2nd response !!");
+app.post("/signup", async (req, res) => {
+const user=new UserModel(req.body);
+  // const user = new UserModel({
+  //   firstName: "Akshay",
+  //   lastName: "Prabhu",
+  //   name:"Aksau",
+  //   emailId: "akshay@gmail.com",
+  //   password: "asdsad"
+  // });
+  try {
+    await user.save();
+    res.send("User Inserted Successfully");
+  } catch (error) {
+    console.log(error);
   }
-);
-
-// Regex
-app.get("/abc(de)?d", (req, res) => {
-  res.send({ firstName: "Akshay" });
-});
-// This will only handle GET call to /user
-app.get("/*user$/", (req, res) => {
-  res.send({ firstName: "Akshay" });
 });
 
-app.post("/user", (req, res) => {
-  res.send("Data saved successfully");
-});
-
-// This will match all HTTP requests like Get, Post and all
-app.use("/hello", (req, res) => {
-  res.send("Hello from server");
-});
-app.listen(3000, () => {
-  console.log("Listen to PORT:3000");
-});
+connectionDB()
+  .then(() => {
+    console.log("Connection successful..");
+    app.listen(3000, () => {
+      console.log("Listen to PORT:3000");
+    });
+  })
+  .catch((err) => {
+    console.log("Some Error", err);
+  });
