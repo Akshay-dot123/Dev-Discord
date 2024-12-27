@@ -3,9 +3,10 @@ const { performance } = require("perf_hooks");
 const start = performance.now();
 const connectionDB = require("./config/database");
 const cookieParser = require("cookie-parser");
+const cors=require("cors")
 require("./config/database");
 const app = express();
-
+app.use(cors())
 app.use(express.json()); // If we dont use this we will get undefined if we log request body
 app.use(cookieParser()); // Just like express.json(), you get undefined if we dont use cookies
 
